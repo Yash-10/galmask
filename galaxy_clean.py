@@ -7,7 +7,7 @@ from skimage.feature import peak_local_max
 from photutils.segmentation import deblend_sources
 
 
-def find_farthest_label(coords, refx, refy):
+def find_farthest_label(coords, refx, refy):  # TODO: This function is slow and inefficient -- rewrite using standard libraries.
     max_dist = -np.Inf
     max_index = -99
     for i in range(coords.shape[0]):
@@ -17,24 +17,33 @@ def find_farthest_label(coords, refx, refy):
             max_index = i
     return max_index
 
-def clean(filename, npixels, nlevels, contrast, min_distance, num_peaks, num_peaks_per_label, connectivity):
+def clean(filename, npixels, nlevels, contrast, min_distance, num_peaks, num_peaks_per_label, connectivity, kernel=None):
+    """
+    Cleans an input galaxy image by removing unwanted detections.
+    
+    Parameters
+    ----------
+    
+    Return
+    ------
+    
+    
+    """
     hdul = fits.open(filename)
     gal_data = hdul[1].data
     _img_shape = gal_data.shape
     objects = hdul[3].data
     objects = objects.astype('uint8')
 
-    # TODO: Define a gaussian kernel of some width if "kernel.fits" not given.
-
     # Convolve input image with a 2D kernel.
-    kernel = fits.getdata("kernel.fits")
+    if kernel is None:
+        kernel = fits.getdata("kernel.fits")  # TODO: Define a gaussian kernel of some width if "kernel.fits" not given?
     if not np.allclose(np.sum(kernel), 1.0):
         warnings.warn("Kernel is not normalized.")
     if np.isclose(np.sum(kernel), 0.0):
         raise ValueError("Kernel sum is close to zero. Cannot use it for convolution.")
 
     convolved_data = convolve(gal_data, kernel)
-
 
     segm_deblend = deblend_sources(convolved_data, hdul[3].data, npixels=npixels, nlevels=nlevels, contrast=contrast)
 
