@@ -20,43 +20,37 @@ def clean(
 ):
     """Removes background source detections from input galaxy image.
 
-    Parameters
-    ----------
-    image: numpy.ndarray
-        Galaxy image.
-    npixels: int
-        The no. of connected pixels that an object must have to be detected.
-    nlevels: int
-        No. of multi-thresholding levels to be used for deblending.
-    nsigma: float
-        No. of standard deviations per pixel above the background to be considered as a part of source.
-    contrast: float
-        Controls the level of deblending.
-    min_distance: int
-        The minimum distance between distinct local peaks.
-    num_peaks: int
-        Maximum no. of peaks in the image.
-    num_peaks_per_label: int
-        Maximum no. of peaks per label of the segmentation map.
-    connectivity: int, optional
-        Either 4 or 8, defaults to 4.
-    kernel: numpy.ndarray, optional
-        Kernel array to use for convolution.
-    seg_image: numpy.ndarray, optional.
-        Segmentation map.
-    mode: str, optional
-        If "1", then performs connected component analysis else not.
-    remove_local_max: bool, optional
-        Whether to remove labels corresponding to peak local maximas far away from the center.
-        If unsure, keep the default, i.e. True.
-    deblend_sources: bool, optional
-        Whether to deblend sources in the image.
-        Set to True if there are nearby/overlapping sources in the image.
+    :param image: Galaxy image.
+    :type image: numpy.ndarray
+    :param npixels: The no. of connected pixels that an object must have to be detected.
+    :type npixels: int
+    :param nlevels: No. of multi-thresholding levels to be used for deblending.
+    :type nlevels: int
+    :param nsigma: No. of standard deviations per pixel above the background to be considered as a part of source.
+    :type nsigma: float
+    :param contrast: Controls the level of deblending.
+    :type contrast: float
+    :param min_distance: The minimum distance between distinct local peaks.
+    :type min_distance: int
+    :param num_peaks: Maximum no. of peaks in the image.
+    :type num_peaks: int
+    :param num_peaks_per_label: Maximum no. of peaks per label of the segmentation map.
+    :type num_peaks_per_label: int
+    :param connectivity: Either 4 or 8, defaults to 4.
+    :type connectivity: int
+    :param kernel: Kernel array to use for convolution.
+    :type kernel: numpy.ndarray, optional
+    :param seg_image: Segmentation map.
+    :type seg_image: numpy.ndarray, optional
+    :param mode: If "1", then performs connected component analysis else not, defaults to "1".
+    :type mode: str, optional
+    :param remove_local_max: Whether to remove labels corresponding to peak local maximas far away from the center. If unsure, keep the default, defaults to `True`.
+    :type remove_local_max: bool, optional
+    :param deblend_sources: Whether to deblend sources in the image. Set to True if there are nearby/overlapping sources in the image, defaults to `True`.
+    :type deblend_sources: bool, optional
 
-    Return
-    ------
-    cleaned_seg_img: numpy.ndarray
-        Cleaned segmentation after removing unwanted source detections.
+    :return cleaned_seg_img: Cleaned segmentation after removing unwanted source detections.
+    :rtype: numpy.ndarray
 
     Notes
     -----

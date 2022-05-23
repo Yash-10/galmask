@@ -1,10 +1,9 @@
-from setuptools import setup
-
-with open("README.md", "r") as f:
-    long_description = f.read()
+from setuptools import setup, find_packages
 
 if __name__ == "__main__":
     setup(
-        long_description=long_description,
-        long_description_content_type="text/markdown"
+        name='galmask',
+        version='0.1.0',
+        author='Yash Gondhalekar, Rafael S. de Souza',
+        packages=find_packages(),
     )

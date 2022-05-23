@@ -1,1 +1,1 @@
-# galaxy-image-cleaning
+# galmask
