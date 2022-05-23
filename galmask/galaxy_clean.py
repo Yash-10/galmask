@@ -1,51 +1,22 @@
 import cv2
 import numpy as np
 
+from skimage.feature import peak_local_max
+
 from astropy.io import fits
 from astropy.convolution import convolve
-from astropy.stats import sigma_clipped_stats
+from astropy.stats import sigma_clipped_stats, gaussian_fwhm_to_sigma
 
-from skimage.feature import peak_local_max
-from skimage.measure import label
-
-from photutils.background import MedianBackground, Background2D
+from photutils.background import MedianBackground
 # from photutils.detection import find_peaks
 from photutils.segmentation import deblend_sources, detect_sources, detect_threshold
 
+from galmask.utils import find_farthest_label, find_closest_label, getLargestCC
 
-# Below two functions are faster than numpy for small coordinate arrays.
-def find_farthest_label(coords, refx, refy):  # TODO: This function is slow and inefficient -- rewrite using standard libraries.
-    max_dist = -np.Inf
-    max_index = -99
-    for i in range(coords.shape[0]):
-        dist = abs(coords[i][0] - refx) + abs(coords[i][1] - refy)
-        if dist > max_dist:
-            max_dist = dist
-            max_index = i
-
-    return max_index
-
-def find_closest_label(coords, refx, refy):
-    min_dist = np.Inf
-    min_index = 99999
-    for i in range(coords.shape[0]):
-        dist = abs(coords[i][0] - refy) + abs(coords[i][1] - refx)
-        if dist < min_dist:
-            min_dist = dist
-            min_index = i
-
-    return min_index + 1
-
-def getLargestCC(segmentation):
-    # From https://stackoverflow.com/questions/47540926/get-the-largest-connected-component-of-segmentation-image
-    labels = label(segmentation)
-    assert labels.max() != 0, "There must be atleast one connected component in the segmentation image!"
-    largestCC = labels == np.argmax(np.bincount(labels.flat)[1:])+1
-    return largestCC
 
 def clean(
     image, npixels, nlevels, nsigma, contrast, min_distance, num_peaks, num_peaks_per_label,
-    connectivity=4, kernel_filename=None, seg_image=None, mode="1", remove_local_max=True, deblend_sources=True
+    connectivity=4, kernel=None, seg_image=None, mode="1", remove_local_max=True, deblend_sources=True
 ):
     """Removes background source detections from input galaxy image.
 
@@ -69,8 +40,8 @@ def clean(
         Maximum no. of peaks per label of the segmentation map.
     connectivity: int, optional
         Either 4 or 8, defaults to 4.
-    kernel_filename: str, optional
-        FITS file of the kernel to be used for convolution.
+    kernel: numpy.ndarray, optional
+        Kernel array to use for convolution.
     seg_image: numpy.ndarray, optional.
         Segmentation map.
     mode: str, optional
@@ -96,11 +67,9 @@ def clean(
     _img_shape = image.shape
 
     # Convolve input image with a 2D kernel.
-    if kernel_filename is None:  # Create a Gaussian kernel with FWHM = 3.
+    if kernel is None:  # Create a Gaussian kernel with FWHM = 3.
         sigma = 3.0 * gaussian_fwhm_to_sigma
         kernel = Gaussian2DKernel(sigma, x_size=3, y_size=3)
-    else:
-        kernel = fits.getdata(kernel_filename)
 
     if not np.allclose(np.sum(kernel), 1.0):
         warnings.warn("Kernel is not normalized.")
