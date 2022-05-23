@@ -9,10 +9,11 @@ from skimage.feature import peak_local_max
 from skimage.measure import label
 
 from photutils.background import MedianBackground, Background2D
-from photutils.detection import find_peaks
+# from photutils.detection import find_peaks
 from photutils.segmentation import deblend_sources, detect_sources, detect_threshold
 
 
+# Below two functions are faster than numpy for small coordinate arrays.
 def find_farthest_label(coords, refx, refy):  # TODO: This function is slow and inefficient -- rewrite using standard libraries.
     max_dist = -np.Inf
     max_index = -99
@@ -35,16 +36,61 @@ def find_closest_label(coords, refx, refy):
 
     return min_index + 1
 
-def clean(image, npixels, nlevels, contrast, min_distance, num_peaks, num_peaks_per_label, connectivity, kernel_filename=None, seg_image=None, mode="1", remove_local_max=True):
-    """
-    Cleans an input galaxy image by removing unwanted detections.
-    
+def getLargestCC(segmentation):
+    # From https://stackoverflow.com/questions/47540926/get-the-largest-connected-component-of-segmentation-image
+    labels = label(segmentation)
+    assert labels.max() != 0, "There must be atleast one connected component in the segmentation image!"
+    largestCC = labels == np.argmax(np.bincount(labels.flat)[1:])+1
+    return largestCC
+
+def clean(
+    image, npixels, nlevels, nsigma, contrast, min_distance, num_peaks, num_peaks_per_label,
+    connectivity=4, kernel_filename=None, seg_image=None, mode="1", remove_local_max=True, deblend_sources=True
+):
+    """Removes background source detections from input galaxy image.
+
     Parameters
     ----------
-    
+    image: numpy.ndarray
+        Galaxy image.
+    npixels: int
+        The no. of connected pixels that an object must have to be detected.
+    nlevels: int
+        No. of multi-thresholding levels to be used for deblending.
+    nsigma: float
+        No. of standard deviations per pixel above the background to be considered as a part of source.
+    contrast: float
+        Controls the level of deblending.
+    min_distance: int
+        The minimum distance between distinct local peaks.
+    num_peaks: int
+        Maximum no. of peaks in the image.
+    num_peaks_per_label: int
+        Maximum no. of peaks per label of the segmentation map.
+    connectivity: int, optional
+        Either 4 or 8, defaults to 4.
+    kernel_filename: str, optional
+        FITS file of the kernel to be used for convolution.
+    seg_image: numpy.ndarray, optional.
+        Segmentation map.
+    mode: str, optional
+        If "1", then performs connected component analysis else not.
+    remove_local_max: bool, optional
+        Whether to remove labels corresponding to peak local maximas far away from the center.
+        If unsure, keep the default, i.e. True.
+    deblend_sources: bool, optional
+        Whether to deblend sources in the image.
+        Set to True if there are nearby/overlapping sources in the image.
+
     Return
     ------
+    cleaned_seg_img: numpy.ndarray
+        Cleaned segmentation after removing unwanted source detections.
 
+    Notes
+    -----
+    The method assumes the image is more or less centered on the galaxy image. If it is not, one needs to shift the
+    image appropriately.
 
     """
     _img_shape = image.shape
@@ -65,20 +111,18 @@ def clean(image, npixels, nlevels, contrast, min_distance, num_peaks, num_peaks_
 
     if seg_image is None:
         bkg_level = MedianBackground().calc_background(image)
-        threshold = detect_threshold(image - bkg_level, nsigma=2.)
-        objects = detect_sources(convolved_data, threshold, npixels=5).data
+        threshold = detect_threshold(image - bkg_level, nsigma=nsigma)
+        objects = detect_sources(convolved_data, threshold, npixels=npixels).data
     else:
         objects = seg_image.copy()
         objects = objects.astype('uint8')
 
-    segm_deblend = deblend_sources(convolved_data, objects, npixels=npixels, nlevels=nlevels, contrast=contrast).data
+    if deblend_sources:
+        segm_deblend = deblend_sources(convolved_data, objects, npixels=npixels, nlevels=nlevels, contrast=contrast).data
+    else:
+        segm_deblend = objects
 
     if remove_local_max:
-        # mean, median, std = sigma_clipped_stats(convolved_data, sigma=3.0)
-        # table = find_peaks(
-        #     convolved_data, threshold=median+5*std, box_size=5
-        # )
-        # local_max = np.array(table[['y_peak', 'x_peak']])
         local_max = peak_local_max(
             convolved_data, min_distance=min_distance, num_peaks=num_peaks, num_peaks_per_label=num_peaks_per_label, labels=segm_deblend.data
         )
@@ -90,7 +134,6 @@ def clean(image, npixels, nlevels, contrast, min_distance, num_peaks, num_peaks_
 
     if mode == "0":  # Seems to be better if many unwanted small detections around central galaxy. eg: Antila images of S-PLUS dataset.
         largestCC = getLargestCC(objects).astype(int)
-        # deblended_seg = deblend_sources(largestCC * gal_data, largestCC, npixels=npixels, nlevels=nlevels, contrast=0).data
         x = largestCC.copy()
     elif mode == "1":  # Seems to work if not too many detections around central galaxy. eg: OMEGA dataset.
         segm_deblend_copy = segm_deblend_copy.astype('uint8')
@@ -99,7 +142,7 @@ def clean(image, npixels, nlevels, contrast, min_distance, num_peaks, num_peaks_
         # The below lines of code are to ensure that if the central source (which is of concern) is not of maximum area, then we should
         # not remove it, and instead select the center source by giving it more priority than area-wise selection. If indeed the central
         # source is of the greatest area, then we can just select it.
-        closest_to_center_label = find_closest_label(centroids[1:, :], 100, 100)  # The first row in `centroids` corresponds to the whole image which we do not want. So consider all rows except the first.
+        closest_to_center_label = find_closest_label(centroids[1:, :], _img_shape/2, _img_shape/2)  # The first row in `centroids` corresponds to the whole image which we do not want. So consider all rows except the first.
         if closest_to_center_label == max_label:
             x = (objects_connected == max_label).astype(int)
         else:
