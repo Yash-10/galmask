@@ -5,4 +5,3 @@ galaxy-image-cleaning
    :maxdepth: 4
 
    galmask
-   setup
