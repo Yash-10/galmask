@@ -1,7 +1,8 @@
-galaxy-image-cleaning
-=====================
+galmask
+=======
 
 .. toctree::
    :maxdepth: 4
 
    galmask
+   tests

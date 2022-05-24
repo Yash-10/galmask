@@ -53,8 +53,6 @@ def clean(
     :return cleaned_seg_img: Cleaned segmentation after removing unwanted source detections.
     :rtype: numpy.ndarray
 
-    Notes
-    -----
     The method assumes the image is more or less centered on the galaxy image. If it is not, one needs to shift the
     image appropriately.
 
