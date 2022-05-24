@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import warnings
 
 from skimage.feature import peak_local_max
 

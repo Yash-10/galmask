@@ -65,5 +65,5 @@ def getLargestCC(segmentation):
     # From https://stackoverflow.com/questions/47540926/get-the-largest-connected-component-of-segmentation-image
     labels = label(segmentation)
     assert labels.max() != 0, "There must be atleast one connected component in the segmentation image!"
-    largestCC = labels == np.argmax(np.bincount(labels.flat)[1:])+1
+    largestCC = labels == np.argmax(np.bincount(labels.flat)[1:]) + 1
     return largestCC
