@@ -62,7 +62,9 @@ def clean(
     # Convolve input image with a 2D kernel.
     if kernel is None:  # Create a Gaussian kernel with FWHM = 3.
         sigma = 3.0 * gaussian_fwhm_to_sigma
-        kernel = Gaussian2DKernel(sigma, x_size=3, y_size=3).array
+        kernel = Gaussian2DKernel(sigma, x_size=3, y_size=3)
+        kernel.normalize()
+        kernel = kernel.array
 
     if not np.allclose(np.sum(kernel), 1.0):
         warnings.warn("Kernel is not normalized.")
