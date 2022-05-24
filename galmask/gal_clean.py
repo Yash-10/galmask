@@ -5,7 +5,7 @@ import warnings
 from skimage.feature import peak_local_max
 
 from astropy.io import fits
-from astropy.convolution import convolve
+from astropy.convolution import convolve, Gaussian2DKernel
 from astropy.stats import sigma_clipped_stats, gaussian_fwhm_to_sigma
 
 from photutils.background import MedianBackground
@@ -17,7 +17,7 @@ from galmask.utils import find_farthest_label, find_closest_label, getLargestCC
 
 def clean(
     image, npixels, nlevels, nsigma, contrast, min_distance, num_peaks, num_peaks_per_label,
-    connectivity=4, kernel=None, seg_image=None, mode="1", remove_local_max=True, deblend_sources=True
+    connectivity=4, kernel=None, seg_image=None, mode="1", remove_local_max=True, deblend=True
 ):
     """Removes background source detections from input galaxy image.
 
@@ -47,8 +47,8 @@ def clean(
     :type mode: str, optional
     :param remove_local_max: Whether to remove labels corresponding to peak local maximas far away from the center. If unsure, keep the default, defaults to `True`.
     :type remove_local_max: bool, optional
-    :param deblend_sources: Whether to deblend sources in the image. Set to True if there are nearby/overlapping sources in the image, defaults to `True`.
-    :type deblend_sources: bool, optional
+    :param deblend: Whether to deblend sources in the image. Set to True if there are nearby/overlapping sources in the image, defaults to `True`.
+    :type deblend: bool, optional
 
     :return cleaned_seg_img: Cleaned segmentation after removing unwanted source detections.
     :rtype: numpy.ndarray
@@ -64,33 +64,36 @@ def clean(
     # Convolve input image with a 2D kernel.
     if kernel is None:  # Create a Gaussian kernel with FWHM = 3.
         sigma = 3.0 * gaussian_fwhm_to_sigma
-        kernel = Gaussian2DKernel(sigma, x_size=3, y_size=3)
+        kernel = Gaussian2DKernel(sigma, x_size=3, y_size=3).array
 
     if not np.allclose(np.sum(kernel), 1.0):
         warnings.warn("Kernel is not normalized.")
     if np.isclose(np.sum(kernel), 0.0):
         raise ValueError("Kernel sum is close to zero. Cannot use it for convolution.")
 
-    convolved_data = convolve(gal_data, kernel, normalize_kernel=True)
+    convolved_data = convolve(image, kernel, normalize_kernel=True)
 
     if seg_image is None:
         bkg_level = MedianBackground().calc_background(image)
         threshold = detect_threshold(image - bkg_level, nsigma=nsigma)
-        objects = detect_sources(convolved_data, threshold, npixels=npixels).data
+        objects = detect_sources(convolved_data, threshold, npixels=npixels)
+        if objects is None:
+            raise ValueError("No source detection found in the image!")
+        objects = objects.data
     else:
         objects = seg_image.copy()
         objects = objects.astype('uint8')
 
-    if deblend_sources:
+    if deblend:
         segm_deblend = deblend_sources(convolved_data, objects, npixels=npixels, nlevels=nlevels, contrast=contrast).data
     else:
         segm_deblend = objects
 
     if remove_local_max:
         local_max = peak_local_max(
-            convolved_data, min_distance=min_distance, num_peaks=num_peaks, num_peaks_per_label=num_peaks_per_label, labels=segm_deblend.data
+            convolved_data, min_distance=min_distance, num_peaks=num_peaks, num_peaks_per_label=num_peaks_per_label, labels=segm_deblend
         )
-        index = find_farthest_label(local_max, _img_shape/2, _img_shape/2)
+        index = find_farthest_label(local_max, _img_shape[0]/2, _img_shape[1]/2)
         val = segm_deblend[local_max[index][0], local_max[index][1]]
         segm_deblend[segm_deblend==val] = 0
 
@@ -101,12 +104,13 @@ def clean(
         x = largestCC.copy()
     elif mode == "1":  # Seems to work if not too many detections around central galaxy. eg: OMEGA dataset.
         segm_deblend_copy = segm_deblend_copy.astype('uint8')
+        # Below line has issues with opencv-python-4.5.5.64, so to fix, downgrade the version.
         nb_components, objects_connected, stats, centroids = cv2.connectedComponentsWithStats(segm_deblend_copy, connectivity=connectivity)  # We want to remove all detections far apart from the central galaxy.
         max_label, max_size = max([(i, stats[i, cv2.CC_STAT_AREA]) for i in range(1, nb_components)], key=lambda x: x[1])
         # The below lines of code are to ensure that if the central source (which is of concern) is not of maximum area, then we should
         # not remove it, and instead select the center source by giving it more priority than area-wise selection. If indeed the central
         # source is of the greatest area, then we can just select it.
-        closest_to_center_label = find_closest_label(centroids[1:, :], _img_shape/2, _img_shape/2)  # The first row in `centroids` corresponds to the whole image which we do not want. So consider all rows except the first.
+        closest_to_center_label = find_closest_label(centroids[1:, :], _img_shape[0]/2, _img_shape[1]/2)  # The first row in `centroids` corresponds to the whole image which we do not want. So consider all rows except the first.
         if closest_to_center_label == max_label:
             x = (objects_connected == max_label).astype(int)
         else:

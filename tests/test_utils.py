@@ -1,4 +1,5 @@
 import pytest
+import numpy as np
 from astropy.io import fits
 
 from galmask.utils import find_closest_label, find_farthest_label, getLargestCC
@@ -44,7 +45,7 @@ def test_closest_coordinate():
 
 def test_getLargestCC():
     segmap = fits.getdata('./data/test_getLargestCC_seg_map.fits')
-    bool_arr = getLargestCC(segmap)
+    largestCC_segmap = getLargestCC(segmap).astype(int)
 
-    assert len(np.unique(bool_arr)) == 2
-    assert 0 in bool_arr and 6 in bool_arr
+    assert len(np.unique(largestCC_segmap)) == 2
+    assert 0 in largestCC_segmap and 1 in largestCC_segmap
