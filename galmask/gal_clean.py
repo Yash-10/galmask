@@ -100,7 +100,7 @@ def clean(
     segm_deblend_copy = segm_deblend.copy()
 
     if mode == "0":  # Seems to be better if many unwanted small detections around central galaxy. eg: Antila images of S-PLUS dataset.
-        largestCC = getLargestCC(objects).astype(int)
+        largestCC = getLargestCC(objects).astype(float)
         x = largestCC.copy()
     elif mode == "1":  # Seems to work if not too many detections around central galaxy. eg: OMEGA dataset.
         segm_deblend_copy = segm_deblend_copy.astype('uint8')
@@ -112,8 +112,13 @@ def clean(
         # source is of the greatest area, then we can just select it.
         closest_to_center_label = find_closest_label(centroids[1:, :], _img_shape[0]/2, _img_shape[1]/2)  # The first row in `centroids` corresponds to the whole image which we do not want. So consider all rows except the first.
         if closest_to_center_label == max_label:
-            x = (objects_connected == max_label).astype(int)
+            x = (objects_connected == max_label).astype(float)
         else:
-            x = (objects_connected == closest_to_center_label).astype(int)
+            x = (objects_connected == closest_to_center_label).astype(float)
+
+    orig_bkg = MedianBackground().calc_background(image)
+    print(orig_bkg)
+    x[np.where(x == 0.)] = orig_bkg
+    # TODO: Whether there is gradient in background or not. Then decide 2D or scalar background to use.
 
     return x
