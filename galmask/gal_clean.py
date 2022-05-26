@@ -115,9 +115,11 @@ def clean(
             x = (objects_connected == max_label).astype(float)
         else:
             x = (objects_connected == closest_to_center_label).astype(float)
+    elif mode == "2":
+        largestCC = getLargestCC(segm_deblend_copy).astype(float)
+        x = largestCC.copy()
 
     orig_bkg = MedianBackground().calc_background(image)
-    print(orig_bkg)
     x[np.where(x == 0.)] = orig_bkg
     # TODO: Whether there is gradient in background or not. Then decide 2D or scalar background to use.
 
