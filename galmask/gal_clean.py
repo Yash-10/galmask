@@ -8,7 +8,7 @@ from astropy.io import fits
 from astropy.convolution import convolve, Gaussian2DKernel
 from astropy.stats import sigma_clipped_stats, gaussian_fwhm_to_sigma
 
-from photutils.background import MedianBackground
+from photutils.background import MedianBackground, Background2D
 # from photutils.detection import find_peaks
 from photutils.segmentation import deblend_sources, detect_sources, detect_threshold
 
@@ -119,8 +119,10 @@ def clean(
         largestCC = getLargestCC(segm_deblend_copy).astype(float)
         x = largestCC.copy()
 
-    orig_bkg = MedianBackground().calc_background(image)
-    x[np.where(x == 0.)] = orig_bkg
-    # TODO: Whether there is gradient in background or not. Then decide 2D or scalar background to use.
+    galmasked = np.multiply(x, gal_data)
 
-    return x
+    orig_bkg = MedianBackground().calc_background(gal_data)
+    galmasked[galmasked != 0.0] -= orig_bkg
+    galmasked += Background2D(gal_data, box_size=50, filter_size=(3, 3), mask=objects).background
+
+    return galmasked
