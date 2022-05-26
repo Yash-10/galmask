@@ -119,10 +119,11 @@ def clean(
         largestCC = getLargestCC(segm_deblend_copy).astype(float)
         x = largestCC.copy()
 
-    galmasked = np.multiply(x, gal_data)
+    galmasked = np.multiply(x, image)
 
-    orig_bkg = MedianBackground().calc_background(gal_data)
-    galmasked[galmasked != 0.0] -= orig_bkg
-    galmasked += Background2D(gal_data, box_size=50, filter_size=(3, 3), mask=objects).background
+    orig_bkg = MedianBackground().calc_background(image)
+    # galmasked[galmasked != 0.0] -= orig_bkg
+    # galmasked += Background2D(image, box_size=50, filter_size=(3, 3), mask=objects).background
+    galmasked[galmasked == 0.] = orig_bkg
 
-    return galmasked
+    return galmasked, x
