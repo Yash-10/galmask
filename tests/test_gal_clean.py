@@ -4,7 +4,7 @@ from astropy.convolution import Gaussian2DKernel
 
 from photutils.datasets import make_100gaussians_image
 
-from galmask.gal_clean import clean
+from galmask.gal_mask import galMask
 
 
 @pytest.mark.filterwarnings("ignore::UserWarning")
@@ -15,7 +15,7 @@ def test_clean_kernel_sum_close_to_zero_raises_error():
     kernel /= 1e9  # Make kernel values very small
 
     with pytest.raises(ValueError) as excinfo:
-        clean(
+        galMask(
             image, npixels, nlevels, nsigma, contrast, min_distance,
             num_peaks, num_peaks_per_label, kernel=kernel
         )
@@ -31,7 +31,7 @@ def test_raises_error_if_no_source_detected():
     npixels, nlevels, nsigma, num_peaks, num_peaks_per_label, contrast, min_distance = 5, 32, 3, 3, 2, 0.001, 3  # Any dummy values.
 
     with pytest.raises(ValueError) as excinfo:
-        clean(
+        galMask(
             image, npixels, nlevels, nsigma, contrast, min_distance,
             num_peaks, num_peaks_per_label
         )
@@ -45,7 +45,7 @@ def test_kernel_not_normalized_raises_warning():
     kernel = Gaussian2DKernel(2).array
 
     with pytest.warns():
-        clean(
+        galMask(
             image, npixels, nlevels, nsigma, contrast, min_distance,
             num_peaks, num_peaks_per_label, kernel=kernel
         )
