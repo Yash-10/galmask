@@ -69,8 +69,13 @@ Example usage
 It returns the final segmentation map along with the final galaxy image which can now be used in downstream analyses.
 
 
-Building documentation
+Running tests and building the documentation
 ======================
+
+To run tests locally, you would need to install `pytest https://docs.pytest.org/`_. Once done, you can
+navigate to the `tests/` directory and run, for example::
+
+   pytest test_galmask.py
 
 If you would like to build the documentation locally, you can do::
 
