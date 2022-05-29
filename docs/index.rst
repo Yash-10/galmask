@@ -70,9 +70,9 @@ It returns the final segmentation map along with the final galaxy image which ca
 
 
 Running tests and building the documentation
-======================
+============================================
 
-To run tests locally, you would need to install `pytest https://docs.pytest.org/`_. Once done, you can
+To run tests locally, you would need to install `pytest https://docs.pytest.org/`__. Once done, you can
 navigate to the `tests/` directory and run, for example::
 
    pytest test_galmask.py
