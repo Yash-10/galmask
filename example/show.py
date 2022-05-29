@@ -15,10 +15,10 @@ def axes_colorbar(ax):
     cax = divider.append_axes('bottom', size='5%', pad=0.05)
     return cax
 
-filepath = 'eso43725_G.fits'
+filepath = 'gal.fits'
 image = fits.getdata(filepath)
 npixels, nlevels, nsigma, contrast, min_distance, num_peaks, num_peaks_per_label, connectivity, remove_local_max = 5, 32, 3., 0.001, 1, 10, 3, 4, True
-hdul = fits.open(filepath+'_segment.fits')
+hdul = fits.open('gal_segment.fits')
 objects = hdul[3].data
 seg_image = objects.astype('uint8')
 

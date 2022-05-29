@@ -69,6 +69,18 @@ Example usage
 It returns the final segmentation map along with the final galaxy image which can now be used in downstream analyses.
 
 
+Building documentation
+======================
+
+If you would like to build the documentation locally, you can do::
+
+    cd docs/
+    make html
+    python -m http.server
+
+You can open http://0.0.0.0:8000/ in your browser.
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
