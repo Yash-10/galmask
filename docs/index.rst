@@ -72,7 +72,7 @@ It returns the final segmentation map along with the final galaxy image which ca
 Running tests and building the documentation
 ============================================
 
-To run tests locally, you would need to install `pytest https://docs.pytest.org/`__. Once done, you can
+To run tests locally, you would need to install `pytest <https://docs.pytest.org/>`__. Once done, you can
 navigate to the `tests/` directory and run, for example::
 
    pytest test_galmask.py
@@ -83,7 +83,7 @@ If you would like to build the documentation locally, you can do::
     make html
     python -m http.server
 
-You can open http://0.0.0.0:8000/ in your browser.
+You can open the url http://0.0.0.0:8000/ in your browser.
 
 
 .. toctree::
