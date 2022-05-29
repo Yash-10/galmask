@@ -5,4 +5,3 @@ galmask
    :maxdepth: 4
 
    galmask
-   tests

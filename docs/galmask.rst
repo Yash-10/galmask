@@ -4,10 +4,10 @@ galmask package
 Submodules
 ----------
 
-galmask.gal\_clean module
+galmask.gal\_mask module
 -------------------------
 
-.. automodule:: galmask.gal_clean
+.. automodule:: galmask.gal_mask
    :members:
    :undoc-members:
    :show-inheritance:
