@@ -17,3 +17,5 @@ image, npixels, nlevels, nsigma, contrast, min_distance, num_peaks, num_peaks_pe
 '''
 
 timeit.repeat(stmt, setup=setup, number=100, repeat=5)
+
+# Then take the mean of times output from timeit.repeat, for example.
