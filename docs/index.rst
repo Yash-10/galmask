@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-galmask: An unsupervised galaxy masking approach
-================================================
+galmask: An unsupervised galaxy masking package
+===============================================
 
 **galmask** is an open-source package written in Python that provides a simple way to remove unwanted
 background source detections from galaxy images. It builds on top of `astropy` and `photutils`
@@ -68,6 +68,25 @@ Example usage
 
 It returns the final segmentation map along with the final galaxy image which can now be used in downstream analyses.
 
+General tips
+============
+
+Note that most of the parameters like ``npixels``, ``nlevels``, etc. are passed directly to downstream methods:
+
+- ``npixels`` is passed to the ``detect_sources`` method from ``photutils``.
+- ``npixels``, ``nlevels``, and ``contrast`` are passed to the ``deblend_sources`` method from ``photutils``.
+- ``min_distance``, ``num_peaks``, and ``num_peaks_per_label`` are passed to the ``peak_local_max`` function from ``skimage``.
+- ``connectivity`` is used for the connected-component analysis from ``opencv-python``.
+
+Hence, a better understanding and usage of these parameters can be seen from their respective documentation.
+
+Here are some empirical notes and tips:
+
+#. If there are nearby sources in your image, you might want to set ``deblend = True``.
+#. Using 8-connectivity tends to maximizes connection of objects together. So use 4-connectivity if you do not want to maximize the connection.
+#. For better performance, it might be helpful to input a custom ``kernel`` and ``seg_image`` since it alleviates some internal calculations.
+#. If unsure, set ``remove_local_max = True``.
+#. The ``mode`` argument is an important one since the results significantly depend on this value. It might happen that ``mode = 1`` works well for one image but not for the other, for example. **Although mode = 1 is the default, it might not be the best option for your image. So, currently, you would need to try all the possible modes.**
 
 Running tests and building the documentation
 ============================================
@@ -77,13 +96,15 @@ navigate to the `tests/` directory and run, for example::
 
    pytest test_galmask.py
 
+and it should run without any failures!
+
 If you would like to build the documentation locally, you can do::
 
     cd docs/
     make html
     python -m http.server
 
-You can open the url http://0.0.0.0:8000/ in your browser.
+You can then open the url http://0.0.0.0:8000/ in your browser.
 
 
 .. toctree::
