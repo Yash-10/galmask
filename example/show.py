@@ -8,7 +8,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 plt.rc('font', family='sans-serif')
 
-from galmask.gal_mask import galMask
+from galmask.galmask import galmask
 
 def axes_colorbar(ax):
     divider = make_axes_locatable(ax)
@@ -23,7 +23,7 @@ objects = hdul[3].data
 seg_image = objects.astype('uint8')
 
 start = timer()
-galmasked, galsegmap = galMask(
+galmasked, galsegmap = galmask(
     image, npixels, nlevels, nsigma, contrast, min_distance, num_peaks, num_peaks_per_label,
     connectivity=4, kernel=fits.getdata('kernel.fits'), seg_image=seg_image, mode="2",
     remove_local_max=True, deblend=True
