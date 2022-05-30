@@ -10,6 +10,7 @@ from astropy.stats import sigma_clipped_stats, gaussian_fwhm_to_sigma
 
 from photutils.background import MedianBackground, Background2D
 # from photutils.detection import find_peaks
+from photutils.datasets import apply_poisson_noise
 from photutils.segmentation import deblend_sources, detect_sources, detect_threshold
 
 from galmask.utils import find_farthest_label, find_closest_label, getLargestCC
@@ -120,10 +121,5 @@ def galmask(
         x = largestCC.copy()
 
     galmasked = np.multiply(x, image)
-
-    orig_bkg = MedianBackground().calc_background(image)
-    # galmasked[galmasked != 0.0] -= orig_bkg
-    # galmasked += Background2D(image, box_size=50, filter_size=(3, 3), mask=objects).background
-    galmasked[galmasked == 0.] = orig_bkg
 
     return galmasked, x
