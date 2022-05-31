@@ -29,6 +29,9 @@ cd galmask
 pip install .
 ```
 
+It would be beneficial to create a python virtual environment and install the package within it, to prevent
+manipulating your global dependency versions.
+
 # Quick example
 
 # Documentation
@@ -36,14 +39,26 @@ pip install .
 The documentation is generated using the [Sphinx](https://www.sphinx-doc.org/) documentation tool and hosted by [Read the Docs](https://readthedocs.org/).
 You can find the API reference and also some empirical tips to use galmask there.
 
+# Tests
+
+For running the tests, you would need to install `pytest`. You can navigate to the `tests/` directory and run:
+
+```
+pytest <name_of_file>
+```
+
 # Contribute
 
 Contributions are welcome! Currently, there seem to be a few inefficient ways of handling things within galmask, and we would like you to contribute and improve the package!
 
-Please let us know of any bugs/issues by opening an issue in the [issue tracker](https://github.com/Yash-10/galmask/issues). 
+Please let us know of any bugs/issues by opening an issue in the [issue tracker](https://github.com/Yash-10/galmask/issues).
+
+# Citing
+
+
 
 # License and copyright
 
-galmask uses the MIT License.
+galmask is licensed under the [MIT License](LICENSE).
 
 Copyright (c) 2022 Yash Gondhalekar
