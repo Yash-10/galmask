@@ -41,7 +41,7 @@ You can find the API reference and also some empirical tips to use galmask there
 
 # Tests
 
-For running the tests, you would need to install `pytest`. You can navigate to the `tests/` directory and run:
+For running the tests, you would need to install [pytest](https://docs.pytest.org/). You can navigate to the `tests/` directory and run:
 
 ```
 pytest <name_of_file>
