@@ -76,7 +76,7 @@ def galmask(
 
     if seg_image is None:
         bkg_level = MedianBackground().calc_background(image)
-        threshold = detect_threshold(image - bkg_level, nsigma=nsigma)
+        threshold = detect_threshold(image - bkg_level, nsigma=nsigma, background=0.0)
         objects = detect_sources(convolved_data, threshold, npixels=npixels)
         if objects is None:
             raise ValueError("No source detection found in the image!")
