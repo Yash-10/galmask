@@ -72,11 +72,13 @@ def galmask(
     if np.isclose(np.sum(kernel), 0.0):
         raise ValueError("Kernel sum is close to zero. Cannot use it for convolution.")
 
-    convolved_data = convolve(image, kernel, normalize_kernel=True)
+    bkg_level = MedianBackground().calc_background(image)
+    image_bkg_subtracted = image - bkg_level
+    convolved_data = convolve(image_bkg_subtracted, kernel, normalize_kernel=True)
 
     if seg_image is None:
-        bkg_level = MedianBackground().calc_background(image)
-        threshold = detect_threshold(image - bkg_level, nsigma=nsigma, background=0.0)
+        threshold = detect_threshold(image_bkg_subtracted, nsigma=nsigma, background=0.0)
+        # Since threshold includes background level, we do not subtract background from data that is input to detect_sources.
         objects = detect_sources(convolved_data, threshold, npixels=npixels)
         if objects is None:
             raise ValueError("No source detection found in the image!")
