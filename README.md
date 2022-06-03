@@ -49,11 +49,11 @@ def axes_colorbar(ax):
     cax = divider.append_axes('bottom', size='5%', pad=0.3)
     return cax
 
-filepath = 'example/gal2_R.fits'
+filepath = 'example/gal1_G.fits'
 image = fits.getdata(filepath)
 npixels, nlevels, nsigma, contrast, min_distance, num_peaks, num_peaks_per_label, connectivity, remove_local_max = 5, 32, 2., 0.15, 1, 10, 3, 4, True  # Parameters for galmask
 seg_image = None  # No segmentation map example
-orig_segmap = fits.getdata('example/gal2_orig_segmap_R.fits')
+orig_segmap = fits.getdata('example/gal_seg1.fits')
 
 galmasked, galsegmap = galmask(
     image, npixels, nlevels, nsigma, contrast, min_distance, num_peaks, num_peaks_per_label,
@@ -96,7 +96,7 @@ plt.show()
 
 Output:
 
-![galmask_example](example/galmask_example2.png)
+![galmask_example](example/galmask_example1.png)
 
 # Documentation
 
