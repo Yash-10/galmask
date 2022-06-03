@@ -47,26 +47,70 @@ Example usage
 ::
 
    from astropy.io import fits
+   from astropy.visualization import AsinhStretch, ImageNormalize, ZScaleInterval, LogStretch
+
+   import matplotlib.pyplot as plt
+   from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+   # Import galmask
    from galmask.galmask import galmask
 
-   image = fits.getdata('example/gal.fits')
-   seg_image = fits.getdata('example/gal_segment.fits')
+   def axes_colorbar(ax):
+      divider = make_axes_locatable(ax)
+      cax = divider.append_axes('bottom', size='5%', pad=0.3)
+      return cax
 
-   # Set some parameter values
-   npixels, nlevels, nsigma, contrast, min_distance, num_peaks, num_peaks_per_label = 5, 32, 3., 0.001, 1, 9, 3
+   filepath = 'example/gal2_R.fits'
+   image = fits.getdata(filepath)
+   npixels, nlevels, nsigma, contrast, min_distance, num_peaks, num_peaks_per_label, connectivity, remove_local_max = 5, 32, 2., 0.15, 1, 10, 3, 4, True  # Parameters for galmask
+   seg_image = None  # No segmentation map example
+   orig_segmap = fits.getdata('example/gal2_orig_segmap_R.fits')
 
-   connectivity = 4  # Can be 4 or 8.
-   mode = "1"  # Can be 0, 1, or 2.
-   deblend = True  # We want to deblend sources.
-   kernel = None  # Use a 2D Gaussian kernel with FWHM = 3 defined internally.
-
-   # Run galmask
-   final_seg_image, final_image = galmask(
+   galmasked, galsegmap = galmask(
       image, npixels, nlevels, nsigma, contrast, min_distance, num_peaks, num_peaks_per_label,
-      connectivity=connectivity, kernel=kernel, seg_image=seg_image
+      connectivity=4, kernel=fits.getdata('kernel.fits'), seg_image=seg_image, mode="1",
+      remove_local_max=True, deblend=True
    )
 
-It returns the final segmentation map along with the final galaxy image which can now be used in downstream analyses.
+   # Plotting result.
+   fig, ax = plt.subplots(1, 4, figsize=(24, 6))
+
+   # For keeping original and final images on same scale.
+   vmin = min(image.min(), galmasked.min())
+   vmax = max(image.max(), galmasked.max())
+
+   # fig.suptitle(filepath)
+   norm1 = ImageNormalize(image, vmin=vmin, vmax=vmax, interval=ZScaleInterval(), stretch=LogStretch())
+   im0 = ax[0].imshow(image, norm=norm1, origin='lower', cmap='gray')
+   ax[0].set_title("Original image")
+   cax0 = axes_colorbar(ax[0])
+   fig.colorbar(im0, cax=cax0, orientation='horizontal')
+
+   im1 = ax[1].imshow(orig_segmap, origin='lower')
+   ax[1].set_title("Original segmentation map (photutils)")
+   cax1 = axes_colorbar(ax[1])
+   fig.colorbar(im1, cax=cax1, orientation='horizontal')
+
+   im2 = ax[2].imshow(galsegmap, origin='lower', cmap='gray')
+   ax[2].set_title("Final segmentation map (galmask)")
+   cax2 = axes_colorbar(ax[2])
+   fig.colorbar(im2, cax=cax2, orientation='horizontal')
+
+   norm2 = ImageNormalize(galmasked, vmin=vmin, vmax=vmax, interval=ZScaleInterval(), stretch=LogStretch())
+   im3 = ax[3].imshow(galmasked, norm=norm2, origin='lower', cmap='gray')
+   ax[3].set_title("Final image (galmask)")
+   cax3 = axes_colorbar(ax[3])
+   fig.colorbar(im3, cax=cax3, orientation='horizontal')
+
+   plt.show()
+
+Output:
+
+.. image:: ../example/galmask_example1.png
+  :width: 400
+  :alt: galmask example usage
+
+It returns the final segmentation map (column 3) along with the final galaxy image (last column) which can now be used in downstream analyses.
 
 General tips
 ============
