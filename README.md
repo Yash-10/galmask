@@ -96,7 +96,7 @@ plt.show()
 
 Output:
 
-[galmask_example](example/galmask_example2.png)
+![galmask_example](example/galmask_example2.png)
 
 # Documentation
 
