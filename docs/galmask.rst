@@ -7,7 +7,7 @@ Submodules
 galmask.gal\_mask module
 -------------------------
 
-.. automodule:: galmask.gal_mask
+.. automodule:: galmask.galmask
    :members:
    :undoc-members:
    :show-inheritance:

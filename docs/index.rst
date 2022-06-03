@@ -106,8 +106,8 @@ Example usage
 
 Output:
 
-.. image:: ../example/galmask_example1.png
-  :width: 400
+.. image:: ../example/galmask_example2.png
+  :width: 1000
   :alt: galmask example usage
 
 It returns the final segmentation map (column 3) along with the final galaxy image (last column) which can now be used in downstream analyses.
@@ -130,7 +130,7 @@ Here are some empirical notes and tips:
 #. Using 8-connectivity tends to maximizes connection of objects together. So use 4-connectivity if you do not want to maximize the connection.
 #. For better performance, it might be helpful to input a custom ``kernel`` and ``seg_image`` since it alleviates some internal calculations.
 #. If unsure, set ``remove_local_max = True``.
-#. The ``mode`` argument is an important one since the results significantly depend on this value. It might happen that ``mode = 1`` works well for one image but not for the other, for example. **Although mode = 1 is the default, it might not be the best option for your image. So, currently, you would need to try all the possible modes**. We empirically find atleast one mode out of the possible three modes to work for any given image.
+#. The ``mode`` argument is an important one since the results significantly depend on this value. It might happen that ``mode = 1`` works well for one image but not for the other, for example. **Although mode = 1 is the default, you might want to experiment with the other options to choose the best option for your image. So, currently, you might need to try all the three possible modes**. We empirically find atleast one mode out of the possible three modes to work for any given image.
 #. The results do depend on the segmentation map, if any, input to galmask since it used as a basis for further cleaning of the map. So please ensure that your segmentation map is plausible.
 
 
