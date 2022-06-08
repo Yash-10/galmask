@@ -112,6 +112,11 @@ Output:
 
 It returns the final segmentation map (column 3) along with the final galaxy image (last column) which can now be used in downstream analyses.
 
+
+.. note::
+   It is important to note that ``galmask`` returns the final image in which the background pixels are set to zero.
+   However, you could replace all such pixels with a background estimated from the original input image. 
+
 General tips
 ============
 
