@@ -2,6 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/482832399.svg)](https://zenodo.org/badge/latestdoi/482832399)
 [![PyPI version](https://badge.fury.io/py/galmask.svg)](https://badge.fury.io/py/galmask)
+[![Read the Docs](https://readthedocs.org/projects/galmask/badge/?version=latest)](https://galmask.readthedocs.io/en/latest/)
 
 **galmask** is an open-source package written in Python that provides a simple way to remove unwanted background source detections from galaxy images.
 It builds on top of `astropy` and `photutils` astronomical Python libraries and the `opencv` and `skimage` image processing libraries.
