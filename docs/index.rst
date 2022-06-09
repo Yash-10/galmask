@@ -131,13 +131,13 @@ Hence, a better understanding and usage of these parameters can be seen from the
 
 Here are some empirical notes and tips that could be of interest:
 
-#. If there are nearby sources in your image, you might want to set ``deblend = True``.
-#. Using 8-connectivity tends to maximizes connection of objects together. So use 4-connectivity if you do not want to maximize the connection.
+#. You might want to set ``deblend = True`` if there are nearby sources in your image.
+#. Using 8-connectivity tends to maximize connection of objects together. So use 4-connectivity if you do not want to maximize the connection.
 #. For better performance, it might be helpful to input a custom ``kernel`` and ``seg_image`` since it alleviates some internal calculations.
 #. If unsure, set ``remove_local_max = True``.
-#. The ``mode`` argument is an important one since the results significantly depend on this value. It might happen that ``mode = 1`` works well for one image but not for the other, for example. **Although mode = 1 is the default, you might want to experiment with the other options to choose the best option for your image. So, currently, you might need to try all the three possible modes**. We empirically find atleast one mode out of the possible three modes to work for any given image.
-#. The results do depend on the segmentation map, if any, input to galmask since it used as a basis for further cleaning of the map. So please ensure that your segmentation map is plausible.
-#. If you want to input a custom segmentation map, we would recommend using the `NoiseChisel <https://www.gnu.org/software/gnuastro/manual/html_node/NoiseChisel.html>`__ program that does a great job to detect nebulous objects like irregular galaxies and helps particularly in detecting fainter outskirts of a galaxy.
+#. The ``mode`` argument is essential since the results significantly depend on this value. ``mode = 1`` could work well for one image but not for the other. **Although mode = 1 is the default, you might want to experiment with the other options to choose the best option for your image. So, you might need to try all the three possible modes**. We empirically find at least one mode out of the possible three modes to work for any given image.
+#. The results depend on the segmentation map, if any, input to galmask since it used as a basis for further cleaning the map. So please ensure that your segmentation map is plausible.
+#. If you want to input a custom segmentation map, we would recommend using the `NoiseChisel <https://www.gnu.org/software/gnuastro/manual/html_node/NoiseChisel.html>`__ program, which does a great job detecting nebulous objects like irregular galaxies and helps particularly in detecting fainter outskirts of a galaxy.
 
 Running tests and building the documentation
 ============================================
