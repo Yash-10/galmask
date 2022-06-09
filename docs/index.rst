@@ -129,7 +129,7 @@ Note that most of the parameters like ``npixels``, ``nlevels``, etc. are passed 
 
 Hence, a better understanding and usage of these parameters can be seen from their respective documentation.
 
-Here are some empirical notes and tips:
+Here are some empirical notes and tips that could be of interest:
 
 #. If there are nearby sources in your image, you might want to set ``deblend = True``.
 #. Using 8-connectivity tends to maximizes connection of objects together. So use 4-connectivity if you do not want to maximize the connection.
