@@ -157,8 +157,8 @@ If you would like to build the documentation locally, you can do::
 
 You can then open the url http://0.0.0.0:8000/ in your browser.
 
-Acknowledgments
-===============
+References and Acknowledgments
+==============================
 
 #. Astropy Collaboration, Robitaille, T. P., Tollerud, E. J., et al. 2013, A&A, 558, A33, doi: 10.1051/0004-6361/201322068
 #. Astropy Collaboration, Price-Whelan, A. M., Sip˝ocz, B. M., et al. 2018, AJ, 156, 123, doi: 10.3847/1538-3881/aabc4f
