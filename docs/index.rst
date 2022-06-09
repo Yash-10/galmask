@@ -157,6 +157,17 @@ If you would like to build the documentation locally, you can do::
 
 You can then open the url http://0.0.0.0:8000/ in your browser.
 
+Acknowledgments
+===============
+
+#. Astropy Collaboration, Robitaille, T. P., Tollerud, E. J., et al. 2013, A&A, 558, A33, doi: 10.1051/0004-6361/201322068
+#. Astropy Collaboration, Price-Whelan, A. M., Sip˝ocz, B. M., et al. 2018, AJ, 156, 123, doi: 10.3847/1538-3881/aabc4f
+#. Bradley, L., Sipocz, B., Robitaille, T., et al. 2016, Photutils: Photometry tools, Astrophysics Source Code Library, record ascl:1609.011. http://ascl.net/1609.011
+#. Stéfan van der Walt, Johannes L. Schönberger, Juan Nunez-Iglesias, François Boulogne, Joshua D. Warner, Neil Yager, Emmanuelle Gouillart, Tony Yu and the scikit-image contributors. scikit-image: Image processing in Python. PeerJ 2:e453 (2014) https://doi.org/10.7717/peerj.453
+#. Bradski, G., 2000. The OpenCV Library. Dr. Dobb&#x27;s Journal of Software Tools.
+
+- This research made use of `Astropy <https://www.astropy.org>`__, a community-developed core Python package for Astronomy (Robitaille et al., 2013, Price-Whelan et al., 2018)
+- This research made use of `Photutils <https://photutils.readthedocs.io/>`__, an Astropy package for detection and photometry of astronomical sources (Bradley et al. 2022).
 
 .. toctree::
    :maxdepth: 2
