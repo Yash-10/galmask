@@ -105,7 +105,7 @@ Output:
 # Documentation
 
 The documentation is generated using the [Sphinx](https://www.sphinx-doc.org/) documentation tool and hosted by [Read the Docs](https://readthedocs.org/).
-You can find the API reference and also some empirical tips to use galmask there.
+You can find the API reference and also some empirical tips to use galmask in the [documentation](https://galmask.readthedocs.io/en/latest/).
 
 # Tests
 
