@@ -90,7 +90,7 @@ def galmask(
     if deblend:
         segm_deblend = deblend_sources(convolved_data, objects, npixels=npixels, nlevels=nlevels, contrast=contrast).data
     else:
-        segm_deblend = objects
+        segm_deblend = objects.copy()
 
     if remove_local_max:
         local_max = peak_local_max(
