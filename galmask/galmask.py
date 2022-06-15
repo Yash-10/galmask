@@ -13,7 +13,7 @@ from photutils.background import MedianBackground, Background2D
 from photutils.datasets import apply_poisson_noise
 from photutils.segmentation import deblend_sources, detect_sources, detect_threshold
 
-from galmask.utils import find_farthest_label, find_closest_label, getLargestCC
+from galmask.utils import find_farthest_label, find_closest_label, getLargestCC, getCenterLabelRegion
 
 
 def galmask(
@@ -87,6 +87,11 @@ def galmask(
         objects = seg_image.copy()
         objects = objects.astype('uint8')
 
+    if mode == "0":
+        x = getCenterLabelRegion(objects)
+        galmasked = np.multiply(x, image)
+        return galmasked, x
+
     if deblend:
         segm_deblend = deblend_sources(convolved_data, objects, npixels=npixels, nlevels=nlevels, contrast=contrast).data
     else:
@@ -102,10 +107,7 @@ def galmask(
 
     segm_deblend_copy = segm_deblend.copy()
 
-    if mode == "0":  # Seems to be better if many unwanted small detections around central galaxy. eg: Antila images of S-PLUS dataset.
-        largestCC = getLargestCC(objects).astype(float)
-        x = largestCC.copy()
-    elif mode == "1":  # Seems to work if not too many detections around central galaxy. eg: OMEGA dataset.
+    if mode == "1":
         segm_deblend_copy = segm_deblend_copy.astype('uint8')
         # Below line has issues with opencv-python-4.5.5.64, so to fix, downgrade the version.
         nb_components, objects_connected, stats, centroids = cv2.connectedComponentsWithStats(segm_deblend_copy, connectivity=connectivity)  # We want to remove all detections far apart from the central galaxy.
@@ -119,8 +121,7 @@ def galmask(
         else:
             x = (objects_connected == closest_to_center_label).astype(float)
     elif mode == "2":
-        largestCC = getLargestCC(segm_deblend_copy).astype(float)
-        x = largestCC.copy()
+        x = getCenterLabelRegion(segm_deblend_copy)
 
     galmasked = np.multiply(x, image)
 

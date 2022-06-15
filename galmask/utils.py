@@ -1,6 +1,6 @@
 import numpy as np
 
-from skimage.measure import label
+from skimage.measure import label, regionprops
 
 
 # Below two functions are faster than numpy for small coordinate arrays.
@@ -67,3 +67,18 @@ def getLargestCC(segmentation):
     assert labels.max() != 0, "There must be atleast one connected component in the segmentation image!"
     largestCC = labels == np.argmax(np.bincount(labels.flat)[1:]) + 1
     return largestCC
+
+def getCenterLabelRegion(objects):
+    _img_shape = objects.shape
+    _num_labels = len(np.unique(objects)) - 1  # Ignore background label (= 0).
+    props = regionprops(objects)
+    centroids = np.array([props[i].centroid for i in range(_num_labels)])
+    areas = np.array([props[i].area for i in range(_num_labels)])
+    max_label = np.argmax(areas) + 1
+    closest_to_center_label = find_closest_label(centroids, _img_shape[0]/2, _img_shape[1]/2)
+    if closest_to_center_label == max_label:
+        x = (objects == max_label).astype(float)
+    else:
+        x = (objects == closest_to_center_label).astype(float)
+
+    return x
