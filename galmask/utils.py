@@ -74,7 +74,7 @@ def getCenterLabelRegion(objects):
     props = regionprops(objects)
     centroids = np.array([props[i].centroid for i in range(_num_labels)])
     areas = np.array([props[i].area for i in range(_num_labels)])
-    max_label = np.argmax(areas) + 1
+    max_label = np.argmax(areas) + 1   # Need to add one since regionprops ignores background label 0.
     closest_to_center_label = find_closest_label(centroids, _img_shape[0]/2, _img_shape[1]/2)
     if closest_to_center_label == max_label:
         x = (objects == max_label).astype(float)
