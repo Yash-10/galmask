@@ -175,6 +175,52 @@ References and Acknowledgments
 
    modules
 
+Note on replacing background pixel values
+=========================================
+
+Instead of keeping the background pixels set to zero, if you would like to replace it with a background estimate post using galmask,
+you can do so using the below code template (it is inspired by `GalClean <https://github.com/astroferreira/galclean>`__'s source code):
+
+::
+
+   import numpy as np
+   import matplotlib.pyplot as plt
+
+   from photutils.segmentation import deblend_sources, detect_sources, detect_threshold
+   from astropy.convolution import convolve, Gaussian2DKernel
+   from astropy.stats import gaussian_fwhm_to_sigma
+
+   def get_segmap(image):
+      """Creates a segmentation map of the original image, `image`."""
+      npixels = 5
+      nsigma = 3.
+      sigma = 3.0 * gaussian_fwhm_to_sigma
+      kernel = Gaussian2DKernel(sigma, x_size=3, y_size=3)
+      kernel.normalize()
+      kernel = kernel.array
+      bkg_level = MedianBackground().calc_background(image)
+      image_bkg_subtracted = image - bkg_level
+      convolved_data = convolve(image_bkg_subtracted, kernel, normalize_kernel=True)
+      threshold = detect_threshold(image_bkg_subtracted, nsigma=nsigma, background=0.0)
+      objects = detect_sources(convolved_data, threshold, npixels=npixels).data
+      return objects
+
+   objects = get_segmap(image)  # image is the original galaxy image input to galmask.
+   bkgmap = np.ma.masked_equal(objects, 0).mask  # Assume background pixels are set to zero.
+   bkgmap = bkgmap.astype(int)
+   to_replace = np.random.choice((bkgmap * image).ravel(), bkgmap.shape).ravel()  # Select random elements from the background pixel map defined above.
+   if to_replace.shape[0] <= galmask_image[galmask_image == 0].shape[0]:  # If available background pixels to sample is less than the required.
+      extra = np.random.choice((bkgmap * image).ravel(), galmask_image[galmask_image == 0].shape[0] - to_replace.shape[0])
+      galmask_image[galmask_image == 0] = (np.concatenate([to_replace, extra]) / 100)
+   else:
+      _shape = galmask_image[galmask_image == 0].shape
+      galmask_image[galmask_image == 0] = (to_replace[:_shape[0]] / 100)  # Divide by some large enough number (here, 100) to prevent background to be too high.
+
+   plt.imshow(galmask_image)
+   plt.show()
+
+.. note::
+   This is only a template and is **not** optimized or tested extensively. However, it can still be used (without guarantee) if you do not want all background pixels set to zero.
 
 Indices and tables
 ==================
