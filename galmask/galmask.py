@@ -18,7 +18,7 @@ from galmask.utils import find_farthest_label, find_closest_label, getLargestCC,
 
 def galmask(
     image, npixels, nlevels, nsigma, contrast, min_distance, num_peaks, num_peaks_per_label,
-    connectivity=4, kernel=None, seg_image=None, mode="1", remove_local_max=True, deblend=True
+    connectivity=4, kernel=None, seg_image=None, mode="1", remove_local_max=True, deblend=False
 ):
     """Removes background source detections from input galaxy image.
 
