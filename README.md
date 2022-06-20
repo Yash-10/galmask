@@ -57,6 +57,7 @@ filepath = 'example/gal1_G.fits'
 image = fits.getdata(filepath)
 npixels, nlevels, nsigma, contrast, min_distance, num_peaks, num_peaks_per_label, connectivity, remove_local_max = 5, 32, 2., 0.15, 1, 10, 3, 4, True  # Parameters for galmask
 seg_image = None  # No segmentation map example
+
 orig_segmap = fits.getdata('example/gal_seg1.fits')
 
 galmasked, galsegmap = galmask(
@@ -101,6 +102,8 @@ plt.show()
 Output:
 
 ![galmask_example](example/galmask_example1.png)
+
+> **_NOTE:_**  `orig_segmap` is the original segmentation map - it is not returned by galmask. It is an intermediate result calculated inside galmask (if a pre-calculated segmentation map is not input). Here the original segmentation map was stored in a FITS file for demonstration purposes. So if you pass `seg_image=None` (as done in the above example) and would like to create such four-column plots, you would need to edit the source code of `galmask.py` to save the internally calculated segmentation map in a FITS file.
 
 # Documentation
 
