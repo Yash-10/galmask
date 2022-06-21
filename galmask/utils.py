@@ -20,8 +20,8 @@ def find_farthest_label(coords, refx, refy):  # TODO: This function is slow and 
     """
     refcoord = np.array((refx, refy))
     distances = np.linalg.norm(coords - refcoord, axis=1)
-    min_index = np.argmax(distances)
-    return min_index
+    max_index = np.argmax(distances)
+    return max_index
 
 def find_closest_label(coords, refx, refy):
     """Find coordinate (i.e. row) with minimum distance from the reference coordinate, (refx, refy).
