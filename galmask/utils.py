@@ -18,15 +18,10 @@ def find_farthest_label(coords, refx, refy):  # TODO: This function is slow and 
     :rtype: int
 
     """
-    max_dist = -np.Inf
-    max_index = -99
-    for i in range(coords.shape[0]):
-        dist = abs(coords[i][0] - refx) + abs(coords[i][1] - refy)
-        if dist > max_dist:
-            max_dist = dist
-            max_index = i
-
-    return max_index
+    refcoord = np.array((refx, refy))
+    distances = np.linalg.norm(coords - refcoord, axis=1)
+    min_index = np.argmax(distances)
+    return min_index
 
 def find_closest_label(coords, refx, refy):
     """Find coordinate (i.e. row) with minimum distance from the reference coordinate, (refx, refy).
@@ -42,14 +37,9 @@ def find_closest_label(coords, refx, refy):
     :rtype: int
 
     """
-    min_dist = np.Inf
-    min_index = 99999
-    for i in range(coords.shape[0]):
-        dist = abs(coords[i][0] - refy) + abs(coords[i][1] - refx)
-        if dist < min_dist:
-            min_dist = dist
-            min_index = i
-
+    refcoord = np.array((refx, refy))
+    distances = np.linalg.norm(coords - refcoord, axis=1)
+    min_index = np.argmin(distances)
     return min_index + 1
 
 def getLargestCC(segmentation):
@@ -76,9 +66,9 @@ def getCenterLabelRegion(objects):
     areas = np.array([props[i].area for i in range(_num_labels)])
     max_label = props[np.argmax(areas)].label   # Need to add one since regionprops ignores background label 0.
     closest_to_center_label = find_closest_label(centroids, _img_shape[0]/2, _img_shape[1]/2)
-    if closest_to_center_label + 1 == max_label:
+
+    if max_label == props[closest_to_center_label-1].label:
         x = (objects == max_label).astype(float)
     else:
         x = (objects == closest_to_center_label).astype(float)
-
     return x

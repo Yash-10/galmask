@@ -61,6 +61,8 @@ def test_getCenterLabelRegion_two_labels():
     final_segmap = getCenterLabelRegion(segmap)  # Must return the object with label 1 even if it was area-wise smaller since it is the closest to the center.
     xindices, yindices = np.nonzero(final_segmap)
 
+    assert len(np.unique(final_segmap)) == 2
+
     assert xindices.max() == 26
     assert xindices.min() == 23
     assert yindices.max() == 26
@@ -72,11 +74,27 @@ def test_getCenterLabelRegion_multiple_labels():
     segmap[23:27, 23:27] = 1
     segmap[35:48, 35:48] = 2
     segmap[3:18, 3:18] = 3
-    segmap[18:24, 18:24] = 3
+    segmap[18:24, 18:24] = 4
     final_segmap = getCenterLabelRegion(segmap)  # Must return the object with label 1 even if it was area-wise smaller since it is the closest to the center.
     xindices, yindices = np.nonzero(final_segmap)
+
+    assert len(np.unique(final_segmap)) == 2
 
     assert xindices.max() == 26
     assert xindices.min() == 23
     assert yindices.max() == 26
     assert yindices.min() == 23
+
+def test_getCenterLabelRegion_segmap():  # This is just an additional test on an actual segmentation map.
+    # Create a case where central object is not of the largest area -> returned object must be central though.
+    segmap = fits.getdata(
+        os.path.join(current_dir, 'data/test_getCenterLabelRegion_segmap.fits')
+    )
+    final_segmap = getCenterLabelRegion(segmap)
+    xindices, yindices = np.nonzero(final_segmap)
+
+    assert len(np.unique(final_segmap)) == 2
+    assert xindices.max() > 152
+    assert xindices.min() < 212
+    assert yindices.max() > 156
+    assert yindices.min() < 204
