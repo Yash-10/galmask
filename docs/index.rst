@@ -169,12 +169,6 @@ References and Acknowledgments
 - This research made use of `Astropy <https://www.astropy.org>`__, a community-developed core Python package for Astronomy (Robitaille et al., 2013, Price-Whelan et al., 2018)
 - This research made use of `Photutils <https://photutils.readthedocs.io/>`__, an Astropy package for detection and photometry of astronomical sources (Bradley et al. 2022).
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-   modules
-
 Note on replacing background pixel values
 =========================================
 
@@ -221,6 +215,12 @@ you can do so using the below code template (it is inspired by `GalClean <https:
 
 .. note::
    This is only a template and is **not** optimized or tested extensively. However, it can still be used (without guarantee) if you do not want all background pixels set to zero.
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   modules
 
 Indices and tables
 ==================
