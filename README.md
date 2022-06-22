@@ -101,7 +101,7 @@ plt.show()
 
 Output:
 
-![galmask_example](example/galmask_example1.png)
+![galmask_example](https://github.com/Yash-10/galmask/blob/main/example/galmask_example1.png)
 
 > **_NOTE:_**  `orig_segmap` is the original segmentation map - it is not returned by galmask. It is an intermediate result calculated inside galmask (if a pre-calculated segmentation map is not input). Here the original segmentation map was stored in a FITS file for demonstration purposes. So if you pass `seg_image=None` (as done in the above example) and would like to create such four-column plots, you would need to edit the source code of `galmask.py` to save the internally calculated segmentation map in a FITS file.
 
