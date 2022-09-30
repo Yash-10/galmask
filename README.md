@@ -30,7 +30,7 @@ pip install galmask
 ```
 git clone https://github.com/Yash-10/galmask
 cd galmask
-pip install .
+pip install
 ```
 
 It would be beneficial to create a python virtual environment and install the package within it, to prevent
