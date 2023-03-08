@@ -126,6 +126,24 @@ Please let us know of any bugs/issues by opening an issue in the [issue tracker]
 
 # Citing
 
+If you use `galmask` in your research, please consider citing the paper associated with this package:
+
+```bibtex
+@article{Gondhalekar_2022,
+    doi = {10.3847/2515-5172/ac780b},
+    url = {https://dx.doi.org/10.3847/2515-5172/ac780b},
+    year = {2022},
+    month = {jun},
+    publisher = {The American Astronomical Society},
+    volume = {6},
+    number = {6},
+    pages = {128},
+    author = {Yash Gondhalekar and Rafael S. de Souza and Ana L. Chies-Santos},
+    title = {galmask: A Python Package for Unsupervised Galaxy Masking},
+    journal = {Research Notes of the AAS},
+    abstract = {Galaxy morphological classification is a fundamental aspect of galaxy formation and evolution studies. Various machine learning tools have been developed for automated pipeline analysis of large-scale surveys, enabling a fast search for objects of interest. However, crowded regions in the image may pose a challenge as they can lead to bias in the learning algorithm. In this Research Note, we present galmask, an open-source package for unsupervised galaxy masking to isolate the central object of interest in the image. galmask is written in Python and can be installed from PyPI via the pip command.}
+}
+```
 
 
 # License and copyright
