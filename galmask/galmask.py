@@ -82,7 +82,6 @@ def galmask(
         objects = detect_sources(convolved_data, threshold, npixels=npixels)
         if objects is None:
             raise ValueError("No source detection found in the image!")
-        objects = objects.data
     else:
         objects = seg_image.copy()
         objects = objects.astype('uint8')
